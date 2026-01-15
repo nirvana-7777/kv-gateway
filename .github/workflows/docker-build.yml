@@ -158,7 +158,7 @@ jobs:
 
       - name: Log in to Docker Hub
         uses: docker/login-action@v3
-        if: github.event_name == 'push'
+        if: github.event_name == 'push' && secrets.DOCKERHUB_USERNAME
         with:
           username: ${{ secrets.DOCKERHUB_USERNAME }}
           password: ${{ secrets.DOCKERHUB_TOKEN }}
@@ -180,7 +180,7 @@ jobs:
           context: .
           file: ./docker/Dockerfile
           platforms: linux/amd64,linux/arm64
-          push: ${{ github.event_name == 'push' }}
+          push: ${{ github.event_name == 'push' && secrets.DOCKERHUB_USERNAME != '' }}
           tags: ${{ steps.meta.outputs.tags }}
           labels: ${{ steps.meta.outputs.labels }}
           cache-from: type=gha
@@ -239,14 +239,18 @@ jobs:
           cd docker
           docker-compose down
 
+  # Deploy job - only runs if all deployment secrets are set
   deploy:
     needs: [ docker-build, docker-test ]
     runs-on: ubuntu-latest
-    if: github.event_name == 'push' && github.ref == 'refs/heads/main'
+    # Combined condition: only deploy on push to main AND if all secrets are present
+    if: github.event_name == 'push' && github.ref == 'refs/heads/main' && secrets.DEPLOY_HOST_STAGING && secrets.DEPLOY_USER && secrets.DEPLOY_KEY
 
     steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
       - name: Deploy to staging
-        if: ${{ secrets.DEPLOY_HOST_STAGING != '' && secrets.DEPLOY_USER != '' && secrets.DEPLOY_KEY != '' }}
         env:
           DEPLOY_HOST: ${{ secrets.DEPLOY_HOST_STAGING }}
           DEPLOY_USER: ${{ secrets.DEPLOY_USER }}
@@ -273,7 +277,6 @@ jobs:
           '
 
       - name: Verify deployment
-        if: ${{ secrets.DEPLOY_HOST_STAGING != '' && secrets.DEPLOY_USER != '' && secrets.DEPLOY_KEY != '' }}
         env:
           DEPLOY_HOST: ${{ secrets.DEPLOY_HOST_STAGING }}
           DEPLOY_USER: ${{ secrets.DEPLOY_USER }}
@@ -289,8 +292,14 @@ jobs:
           
           echo "✅ Deployment verified successfully!"
 
-      - name: Skip deployment (no credentials)
-        if: ${{ secrets.DEPLOY_HOST_STAGING == '' || secrets.DEPLOY_USER == '' || secrets.DEPLOY_KEY == '' }}
+  # Skip deploy notification - runs when deployment would happen but secrets aren't set
+  skip-deploy:
+    needs: [ docker-build, docker-test ]
+    runs-on: ubuntu-latest
+    if: github.event_name == 'push' && github.ref == 'refs/heads/main' && (!secrets.DEPLOY_HOST_STAGING || !secrets.DEPLOY_USER || !secrets.DEPLOY_KEY)
+
+    steps:
+      - name: Skip deployment
         run: |
           echo "Skipping deployment - deployment credentials not configured"
           echo "To enable deployment, set these secrets in GitHub:"
@@ -300,7 +309,14 @@ jobs:
 
   notify:
     runs-on: ubuntu-latest
-    needs: [ lint, test, security, docker-build, docker-test ]
+    needs:
+      - lint
+      - test
+      - security
+      - docker-build
+      - docker-test
+      - deploy
+      - skip-deploy
     if: always()
 
     steps:
@@ -318,8 +334,11 @@ jobs:
           echo "| Docker Build | ${{ needs.docker-build.result }} | Multi-arch container build |" >> $GITHUB_STEP_SUMMARY
           echo "| Docker Test | ${{ needs.docker-test.result }} | Container smoke tests |" >> $GITHUB_STEP_SUMMARY
           
+          # Check which deployment-related job ran
           if [[ "${{ needs.deploy.result }}" != "" ]]; then
             echo "| Deploy | ${{ needs.deploy.result }} | Staging deployment |" >> $GITHUB_STEP_SUMMARY
+          elif [[ "${{ needs.skip-deploy.result }}" != "" ]]; then
+            echo "| Deploy | ${{ needs.skip-deploy.result }} | Skipped (no credentials) |" >> $GITHUB_STEP_SUMMARY
           fi
           
           if [[ "${{ github.event_name }}" == "push" && "${{ github.ref }}" == "refs/heads/main" ]]; then
@@ -336,7 +355,7 @@ jobs:
           fi
 
       - name: Slack Notification
-        if: ${{ failure() && secrets.SLACK_WEBHOOK_URL != '' }}
+        if: ${{ failure() && secrets.SLACK_WEBHOOK_URL }}
         uses: 8398a7/action-slack@v3
         with:
           status: ${{ job.status }}
