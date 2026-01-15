@@ -82,17 +82,9 @@ jobs:
           pip install -r requirements.txt
           pip install pytest pytest-asyncio pytest-cov httpx
 
-      - name: Run unit tests
-        env:
-          REDIS_HOST: localhost
-          REDIS_PORT: 6379
+      - name: Create test script
         run: |
-          # Run tests with Redis available
-          if [ -d "tests" ]; then
-            pytest tests/ -v --tb=short
-          else
-            echo "No tests directory found. Running basic health check..."
-            python -c "
+          cat > test_import.py << 'EOF'
 import asyncio
 import httpx
 import sys
@@ -111,7 +103,19 @@ async def test_health():
 
 result = asyncio.run(test_health())
 sys.exit(0 if result else 1)
-            "
+EOF
+
+      - name: Run unit tests
+        env:
+          REDIS_HOST: localhost
+          REDIS_PORT: 6379
+        run: |
+          # Run tests with Redis available
+          if [ -d "tests" ]; then
+            pytest tests/ -v --tb=short
+          else
+            echo "No tests directory found. Running basic import check..."
+            python test_import.py
           fi
 
   security:
