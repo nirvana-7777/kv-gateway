@@ -204,7 +204,7 @@ jobs:
       - name: Start Docker Compose services
         run: |
           cd docker
-          docker compose up -d redis gateway
+          docker compose up -d
           echo "Waiting for services to start..."
           sleep 10
 
