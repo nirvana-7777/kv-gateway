@@ -1,9 +1,13 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
   <component name="ChangeListManager">
-    <list default="true" id="57e0c049-26a8-4e4f-bd1a-3662a653121d" name="Changes" comment="change workflow">
-      <change beforePath="$PROJECT_DIR$/.github/workflows/docker-build.yml" beforeDir="false" afterPath="$PROJECT_DIR$/.github/workflows/docker-build.yml" afterDir="false" />
+    <list default="true" id="57e0c049-26a8-4e4f-bd1a-3662a653121d" name="Changes" comment="add readme">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/README.md" beforeDir="false" afterPath="$PROJECT_DIR$/README.md" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/main.py" beforeDir="false" afterPath="$PROJECT_DIR$/app/main.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/pytest.ini" beforeDir="false" afterPath="$PROJECT_DIR$/pytest.ini" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/tests/conftest.py" beforeDir="false" afterPath="$PROJECT_DIR$/tests/conftest.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/tests/test_api.py" beforeDir="false" afterPath="$PROJECT_DIR$/tests/test_api.py" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -64,7 +68,7 @@
       <updated>1768475161895</updated>
       <workItem from="1768475162965" duration="343000" />
       <workItem from="1768475528043" duration="1890000" />
-      <workItem from="1768481322405" duration="4724000" />
+      <workItem from="1768481322405" duration="8760000" />
     </task>
     <task id="LOCAL-00001" summary="Initial">
       <option name="closed" value="true" />
@@ -178,7 +182,31 @@
       <option name="project" value="LOCAL" />
       <updated>1768485518809</updated>
     </task>
-    <option name="localTasksCounter" value="15" />
+    <task id="LOCAL-00015" summary="change workflow">
+      <option name="closed" value="true" />
+      <created>1768486055362</created>
+      <option name="number" value="00015" />
+      <option name="presentableId" value="LOCAL-00015" />
+      <option name="project" value="LOCAL" />
+      <updated>1768486055362</updated>
+    </task>
+    <task id="LOCAL-00016" summary="change workflow">
+      <option name="closed" value="true" />
+      <created>1768486439961</created>
+      <option name="number" value="00016" />
+      <option name="presentableId" value="LOCAL-00016" />
+      <option name="project" value="LOCAL" />
+      <updated>1768486439961</updated>
+    </task>
+    <task id="LOCAL-00017" summary="add readme">
+      <option name="closed" value="true" />
+      <created>1768486967345</created>
+      <option name="number" value="00017" />
+      <option name="presentableId" value="LOCAL-00017" />
+      <option name="project" value="LOCAL" />
+      <updated>1768486967345</updated>
+    </task>
+    <option name="localTasksCounter" value="18" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -187,7 +215,8 @@
   <component name="VcsManagerConfiguration">
     <MESSAGE value="Initial" />
     <MESSAGE value="change workflow" />
-    <option name="LAST_COMMIT_MESSAGE" value="change workflow" />
+    <MESSAGE value="add readme" />
+    <option name="LAST_COMMIT_MESSAGE" value="add readme" />
   </component>
   <component name="com.intellij.coverage.CoverageDataManagerImpl">
     <SUITE FILE_PATH="coverage/kv_gateway$main.coverage" NAME="main Coverage Results" MODIFIED="1768475891791" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" />

@@ -27,6 +27,19 @@ def normalize_hex(value: str) -> str:
     return value.lower()
 
 
+# ---------- Health Endpoint ----------
+
+
+@app.get("/health")
+async def health():
+    try:
+        redis_client.ping()
+    except redis.exceptions.RedisError:
+        raise HTTPException(status_code=503, detail="Redis unavailable")
+
+    return {"status": "ok"}
+
+
 # ---------- Core Endpoints ----------
 
 
@@ -57,19 +70,6 @@ async def get_value(key: str):
         raise HTTPException(status_code=404, detail="Key not found")
 
     return value
-
-
-# ---------- Health Endpoint ----------
-
-
-@app.get("/health")
-async def health():
-    try:
-        redis_client.ping()
-    except redis.exceptions.RedisError:
-        raise HTTPException(status_code=503, detail="Redis unavailable")
-
-    return {"status": "ok"}
 
 
 # ---------- Bulk Endpoint ----------

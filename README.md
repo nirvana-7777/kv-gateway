@@ -1,5 +1,4 @@
-# If you're in the terminal where you got this response, you can:
-echo "# Hex Key-Value Store API
+# Hex Key-Value Store API
 
 A lightweight REST API for storing and retrieving hex-encoded key-value pairs using Redis as the backend storage.
 
@@ -163,5 +162,3 @@ curl http://localhost:7776/health
 - Values limited to 32-character hex strings
 
 ## License
-
-[Specify your license here]" > README.md
