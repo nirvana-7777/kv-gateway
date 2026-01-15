@@ -1,8 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
   <component name="ChangeListManager">
-    <list default="true" id="57e0c049-26a8-4e4f-bd1a-3662a653121d" name="Changes" comment="Fix Linter">
-      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+    <list default="true" id="57e0c049-26a8-4e4f-bd1a-3662a653121d" name="Changes" comment="Add stats">
       <change beforePath="$PROJECT_DIR$/app/main.py" beforeDir="false" afterPath="$PROJECT_DIR$/app/main.py" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
@@ -64,7 +63,7 @@
       <updated>1768475161895</updated>
       <workItem from="1768475162965" duration="343000" />
       <workItem from="1768475528043" duration="1890000" />
-      <workItem from="1768481322405" duration="14516000" />
+      <workItem from="1768481322405" duration="14874000" />
     </task>
     <task id="LOCAL-00001" summary="Initial">
       <option name="closed" value="true" />
@@ -250,7 +249,15 @@
       <option name="project" value="LOCAL" />
       <updated>1768511067820</updated>
     </task>
-    <option name="localTasksCounter" value="24" />
+    <task id="LOCAL-00024" summary="Add stats">
+      <option name="closed" value="true" />
+      <created>1768512495566</created>
+      <option name="number" value="00024" />
+      <option name="presentableId" value="LOCAL-00024" />
+      <option name="project" value="LOCAL" />
+      <updated>1768512495566</updated>
+    </task>
+    <option name="localTasksCounter" value="25" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -261,7 +268,8 @@
     <MESSAGE value="change workflow" />
     <MESSAGE value="add readme" />
     <MESSAGE value="Fix Linter" />
-    <option name="LAST_COMMIT_MESSAGE" value="Fix Linter" />
+    <MESSAGE value="Add stats" />
+    <option name="LAST_COMMIT_MESSAGE" value="Add stats" />
   </component>
   <component name="com.intellij.coverage.CoverageDataManagerImpl">
     <SUITE FILE_PATH="coverage/kv_gateway$main.coverage" NAME="main Coverage Results" MODIFIED="1768475891791" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" />

@@ -242,7 +242,7 @@ async def get_all_stats():
         try:
             for _ in redis_client.scan_iter(match="*"):
                 hex_keys_count += 1  # Since all your keys are hex, count all
-        except:
+        except redis.exceptions.RedisError:
             # If scan fails, estimate from dbsize
             hex_keys_count = total_keys
 
