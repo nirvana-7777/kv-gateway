@@ -130,3 +130,168 @@ async def bulk_put(payload: dict):
         raise HTTPException(status_code=503, detail="Redis unavailable")
 
     return {"stored": len(payload)}
+
+
+# ---------- Statistics Endpoints ----------
+
+
+@app.get("/stats/count")
+async def get_key_count():
+    """Get total number of keys in the database."""
+    try:
+        count = redis_client.dbsize()  # Returns total keys in current database
+        return {"key_count": count}
+    except redis.exceptions.RedisError:
+        raise HTTPException(status_code=503, detail="Redis unavailable")
+
+
+@app.get("/stats/count/{pattern}")
+async def get_pattern_count(pattern: str = "*"):
+    """
+    Count keys matching a pattern.
+    Pattern examples: "*", "prefix:*", "a?c*"
+    """
+    try:
+        count = 0
+        # Use SCAN for better performance with large databases
+        for _ in redis_client.scan_iter(match=pattern):
+            count += 1
+        return {"pattern": pattern, "count": count}
+    except redis.exceptions.RedisError:
+        raise HTTPException(status_code=503, detail="Redis unavailable")
+
+
+@app.get("/stats/info")
+async def get_redis_info(section: str = None):
+    """
+    Get Redis server information.
+    Optional section: server, clients, memory, persistence, stats, etc.
+    """
+    try:
+        if section:
+            info = redis_client.info(section=section)
+        else:
+            info = redis_client.info()
+        return info
+    except redis.exceptions.RedisError:
+        raise HTTPException(status_code=503, detail="Redis unavailable")
+
+
+@app.get("/stats/memory")
+async def get_memory_stats():
+    """Get memory usage statistics."""
+    try:
+        info = redis_client.info("memory")
+        return {
+            "used_memory": info.get("used_memory"),
+            "used_memory_human": info.get("used_memory_human"),
+            "used_memory_peak": info.get("used_memory_peak"),
+            "used_memory_peak_human": info.get("used_memory_peak_human"),
+            "used_memory_rss": info.get("used_memory_rss"),
+            "maxmemory": info.get("maxmemory"),
+            "maxmemory_human": info.get("maxmemory_human"),
+            "maxmemory_policy": info.get("maxmemory_policy"),
+            "key_count": info.get("db0", {}).get("keys", 0) if "db0" in info else 0,
+        }
+    except redis.exceptions.RedisError:
+        raise HTTPException(status_code=503, detail="Redis unavailable")
+
+
+@app.get("/stats/operations")
+async def get_operation_stats():
+    """Get operation statistics."""
+    try:
+        info = redis_client.info("stats")
+        return {
+            "total_connections_received": info.get("total_connections_received"),
+            "total_commands_processed": info.get("total_commands_processed"),
+            "instantaneous_ops_per_sec": info.get("instantaneous_ops_per_sec"),
+            "total_net_input_bytes": info.get("total_net_input_bytes"),
+            "total_net_output_bytes": info.get("total_net_output_bytes"),
+            "keyspace_hits": info.get("keyspace_hits"),
+            "keyspace_misses": info.get("keyspace_misses"),
+            "hit_rate": round(
+                (
+                    info.get("keyspace_hits", 0)
+                    / max(
+                        1, info.get("keyspace_hits", 0) + info.get("keyspace_misses", 0)
+                    )
+                )
+                * 100,
+                2,
+            ),
+        }
+    except redis.exceptions.RedisError:
+        raise HTTPException(status_code=503, detail="Redis unavailable")
+
+
+@app.get("/stats")
+async def get_all_stats():
+    """Get comprehensive Redis statistics."""
+    try:
+        # Get multiple info sections
+        general_info = redis_client.info()
+        memory_info = redis_client.info("memory")
+        stats_info = redis_client.info("stats")
+
+        # Get key count
+        total_keys = redis_client.dbsize()
+
+        # Count keys with your hex pattern (optional)
+        hex_keys_count = 0
+        try:
+            for _ in redis_client.scan_iter(match="*"):
+                hex_keys_count += 1  # Since all your keys are hex, count all
+        except:
+            # If scan fails, estimate from dbsize
+            hex_keys_count = total_keys
+
+        return {
+            "server": {
+                "redis_version": general_info.get("redis_version"),
+                "uptime_in_seconds": general_info.get("uptime_in_seconds"),
+                "uptime_in_days": general_info.get("uptime_in_days"),
+                "connected_clients": general_info.get("connected_clients"),
+                "blocked_clients": general_info.get("blocked_clients"),
+            },
+            "memory": {
+                "used_memory": memory_info.get("used_memory"),
+                "used_memory_human": memory_info.get("used_memory_human"),
+                "used_memory_peak": memory_info.get("used_memory_peak"),
+                "used_memory_peak_human": memory_info.get("used_memory_peak_human"),
+                "maxmemory": memory_info.get("maxmemory"),
+                "maxmemory_human": memory_info.get("maxmemory_human"),
+                "mem_fragmentation_ratio": memory_info.get("mem_fragmentation_ratio"),
+            },
+            "keys": {
+                "total_keys": total_keys,
+                "hex_keys_count": hex_keys_count,
+                "keyspace_hits": stats_info.get("keyspace_hits"),
+                "keyspace_misses": stats_info.get("keyspace_misses"),
+                "hit_rate_percentage": round(
+                    (
+                        stats_info.get("keyspace_hits", 0)
+                        / max(
+                            1,
+                            stats_info.get("keyspace_hits", 0)
+                            + stats_info.get("keyspace_misses", 0),
+                        )
+                    )
+                    * 100,
+                    2,
+                ),
+            },
+            "operations": {
+                "total_commands_processed": stats_info.get("total_commands_processed"),
+                "instantaneous_ops_per_sec": stats_info.get(
+                    "instantaneous_ops_per_sec"
+                ),
+                "total_connections_received": stats_info.get(
+                    "total_connections_received"
+                ),
+            },
+            "timestamp": general_info.get("server_time_usec")
+            or general_info.get("uptime_in_seconds"),
+        }
+    except redis.exceptions.RedisError:
+        raise HTTPException(status_code=503, detail="Redis unavailable")
