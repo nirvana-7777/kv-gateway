@@ -12,7 +12,7 @@ on:
     - cron: '0 2 * * 1'
 
 env:
-  DOCKER_IMAGE: your-username/redis-fastapi-kvstore
+  DOCKER_IMAGE: nirvana777/kv-gateway
   PYTHON_VERSION: '3.12'
   APP_PORT: 7776
 
