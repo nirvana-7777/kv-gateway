@@ -198,46 +198,70 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v4
 
-      - name: Set up Docker Compose
+      - name: Set up Docker
+        uses: docker/setup-buildx-action@v3
+
+      - name: Start Docker Compose services
         run: |
-          # Start services
           cd docker
-          docker-compose up -d
+          docker compose up -d redis gateway
+          echo "Waiting for services to start..."
           sleep 10
 
-      - name: Wait for API
+      - name: Check service status
         run: |
-          # Wait for API to be ready
-          for i in {1..30}; do
-            if curl -s http://localhost:7776/health > /dev/null; then
-              echo "API is ready!"
-              exit 0
-            fi
-            echo "Waiting for API... ($i/30)"
-            sleep 2
-          done
-          echo "API failed to start"
-          exit 1
+          docker ps
+          docker compose -f docker/docker-compose.yml ps
 
-      - name: Test API endpoints
+      - name: Wait for API health endpoint
         run: |
-          echo "Testing PUT endpoint..."
-          curl -X PUT http://localhost:7776/1234567890abcdef1234567890abcdef \
+          for i in {1..30}; do
+            echo "Attempt $i/30: Checking API health..."
+            if curl -f -s http://localhost:7776/health > /dev/null; then
+              echo "✅ API is healthy!"
+              break
+            fi
+            sleep 2
+            if [ $i -eq 30 ]; then
+              echo "❌ API failed to start within 60 seconds"
+              echo "Gateway logs:"
+              docker compose -f docker/docker-compose.yml logs gateway
+              echo "Redis logs:"
+              docker compose -f docker/docker-compose.yml logs redis
+              exit 1
+            fi
+          done
+
+      - name: Run API integration tests
+        run: |
+          # Test 1: Health endpoint
+          echo "Testing health endpoint..."
+          curl -f http://localhost:7776/health
+
+          # Test 2: PUT endpoint
+          echo -e "\nTesting PUT endpoint..."
+          KEY="1234567890abcdef1234567890abcdef"
+          VALUE="fedcba0987654321fedcba0987654321"
+          RESPONSE=$(curl -s -w "%{http_code}" -X PUT http://localhost:7776/$KEY \
             -H "Content-Type: text/plain" \
-            -d "fedcba0987654321fedcba0987654321"
-          
+            -d "$VALUE")
+          echo "Response: $RESPONSE"
+
+          # Test 3: GET endpoint
           echo -e "\nTesting GET endpoint..."
-          curl http://localhost:7776/1234567890abcdef1234567890abcdef
-          
+          curl -f http://localhost:7776/$KEY
+
+          # Test 4: Bulk endpoint
           echo -e "\nTesting bulk endpoint..."
           curl -X POST http://localhost:7776/bulk \
             -H "Content-Type: application/json" \
             -d '{"aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa": "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb", "cccccccccccccccccccccccccccccccc": "dddddddddddddddddddddddddddddddd"}'
 
       - name: Clean up
+        if: always()
         run: |
           cd docker
-          docker-compose down
+          docker compose down -v
 
   # Deploy job - only runs if all deployment secrets are set
   deploy:
