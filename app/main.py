@@ -1,6 +1,7 @@
-import re
-import redis
 import os
+import re
+
+import redis
 from fastapi import FastAPI, HTTPException, Request, Response
 
 HEX_128_RE = re.compile(r"^[A-Fa-f0-9]{32}$")
@@ -16,15 +17,18 @@ redis_client = redis.Redis(
     port=int(os.getenv("REDIS_PORT", 6379)),
     password=redis_password,
     socket_timeout=1,
-    decode_responses=True
+    decode_responses=True,
 )
+
 
 def normalize_hex(value: str) -> str:
     if not isinstance(value, str) or not HEX_128_RE.fullmatch(value):
         raise HTTPException(status_code=400, detail="Invalid hex format")
     return value.lower()
 
+
 # ---------- Core Endpoints ----------
+
 
 @app.put("/{key}")
 async def put_value(key: str, request: Request):
@@ -38,6 +42,7 @@ async def put_value(key: str, request: Request):
         raise HTTPException(status_code=503, detail="Redis unavailable")
 
     return Response(status_code=201)
+
 
 @app.get("/{key}")
 async def get_value(key: str):
@@ -53,7 +58,9 @@ async def get_value(key: str):
 
     return value
 
+
 # ---------- Health Endpoint ----------
+
 
 @app.get("/health")
 async def health():
@@ -64,7 +71,9 @@ async def health():
 
     return {"status": "ok"}
 
+
 # ---------- Bulk Endpoint ----------
+
 
 @app.post("/bulk")
 async def bulk_put(payload: dict):

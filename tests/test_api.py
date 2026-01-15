@@ -1,8 +1,9 @@
+import os
+
 import pytest
+import redis
 from httpx import AsyncClient
 from main import app
-import redis
-import os
 
 
 @pytest.fixture
@@ -18,7 +19,7 @@ def redis_client():
         host=os.getenv("REDIS_HOST", "localhost"),
         port=int(os.getenv("REDIS_PORT", 6379)),
         password=redis_password if redis_password else None,
-        decode_responses=True
+        decode_responses=True,
     )
 
 
@@ -35,8 +36,7 @@ async def test_put_get_value(client, redis_client):
 
     # Test PUT
     response = await client.put(
-        "/1234567890abcdef1234567890abcdef",
-        content="fedcba0987654321fedcba0987654321"
+        "/1234567890abcdef1234567890abcdef", content="fedcba0987654321fedcba0987654321"
     )
     assert response.status_code == 201
 
