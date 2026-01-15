@@ -1,10 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
   <component name="ChangeListManager">
-    <list default="true" id="57e0c049-26a8-4e4f-bd1a-3662a653121d" name="Changes" comment="Initial">
-      <change beforePath="$PROJECT_DIR$/app/main.py" beforeDir="false" afterPath="$PROJECT_DIR$/app/main.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/tests/test_api.py" beforeDir="false" afterPath="$PROJECT_DIR$/tests/test_api.py" afterDir="false" />
-    </list>
+    <list default="true" id="57e0c049-26a8-4e4f-bd1a-3662a653121d" name="Changes" comment="Initial" />
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
     <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
@@ -64,7 +61,7 @@
       <updated>1768475161895</updated>
       <workItem from="1768475162965" duration="343000" />
       <workItem from="1768475528043" duration="1890000" />
-      <workItem from="1768481322405" duration="740000" />
+      <workItem from="1768481322405" duration="787000" />
     </task>
     <task id="LOCAL-00001" summary="Initial">
       <option name="closed" value="true" />
@@ -106,7 +103,15 @@
       <option name="project" value="LOCAL" />
       <updated>1768481916291</updated>
     </task>
-    <option name="localTasksCounter" value="6" />
+    <task id="LOCAL-00006" summary="Initial">
+      <option name="closed" value="true" />
+      <created>1768482073143</created>
+      <option name="number" value="00006" />
+      <option name="presentableId" value="LOCAL-00006" />
+      <option name="project" value="LOCAL" />
+      <updated>1768482073143</updated>
+    </task>
+    <option name="localTasksCounter" value="7" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
