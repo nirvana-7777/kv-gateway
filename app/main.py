@@ -72,6 +72,43 @@ async def get_value(key: str):
     return value
 
 
+@app.delete("/{key}")
+async def delete_value(key: str):
+    """
+    Delete a key-value pair from Redis.
+
+    Similar to PUT endpoint in terms of:
+    1. Key validation using normalize_hex()
+    2. Redis error handling
+    3. Returns appropriate HTTP status codes
+
+    Key differences:
+    1. No request body needed (DELETE doesn't typically have a body)
+    2. Returns 200 if key existed and was deleted
+    3. Returns 404 if key didn't exist (matches GET behavior)
+    """
+    key = normalize_hex(key)
+
+    try:
+        # Check if key exists first (like GET does)
+        exists = redis_client.exists(key)
+
+        if not exists:
+            raise HTTPException(status_code=404, detail="Key not found")
+
+        # Delete the key
+        deleted = redis_client.delete(key)
+
+        # Should be 1 since we verified it exists
+        if deleted != 1:
+            raise HTTPException(status_code=500, detail="Failed to delete key")
+
+    except redis.exceptions.RedisError:
+        raise HTTPException(status_code=503, detail="Redis unavailable")
+
+    return Response(status_code=200)
+
+
 # ---------- Bulk Endpoint ----------
 
 
