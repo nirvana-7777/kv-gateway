@@ -1,15 +1,20 @@
 import re
 import redis
+import os
 from fastapi import FastAPI, HTTPException, Request, Response
 
 HEX_128_RE = re.compile(r"^[A-Fa-f0-9]{32}$")
 
 app = FastAPI()
 
+# Get Redis password from environment (empty string becomes None)
+redis_password = os.getenv("REDIS_PASSWORD")
+redis_password = redis_password if redis_password else None
+
 redis_client = redis.Redis(
-    host="redis",
-    port=6379,
-    password="strongpassword",
+    host=os.getenv("REDIS_HOST", "redis"),
+    port=int(os.getenv("REDIS_PORT", 6379)),
+    password=redis_password,
     socket_timeout=1,
     decode_responses=True
 )
