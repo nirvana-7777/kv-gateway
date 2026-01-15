@@ -353,13 +353,3 @@ jobs:
               echo "⚠️ **Deployment:** Not configured (set DEPLOY_HOST_STAGING secret)" >> $GITHUB_STEP_SUMMARY
             fi
           fi
-
-      - name: Slack Notification
-        # FIXED: Use full ${{ }} expression syntax
-        if: ${{ failure() && secrets.SLACK_WEBHOOK_URL }}
-        uses: 8398a7/action-slack@v3
-        with:
-          status: ${{ job.status }}
-          fields: repo,commit,author,workflow
-        env:
-          SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK_URL }}
