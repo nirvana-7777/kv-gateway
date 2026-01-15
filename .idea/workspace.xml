@@ -3,8 +3,6 @@
   <component name="ChangeListManager">
     <list default="true" id="57e0c049-26a8-4e4f-bd1a-3662a653121d" name="Changes" comment="Initial">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/main.py" beforeDir="false" afterPath="$PROJECT_DIR$/app/main.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/docker/docker-compose.yml" beforeDir="false" afterPath="$PROJECT_DIR$/docker/docker-compose.yml" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -64,7 +62,8 @@
       <option name="presentableId" value="Default" />
       <updated>1768475161895</updated>
       <workItem from="1768475162965" duration="343000" />
-      <workItem from="1768475528043" duration="1230000" />
+      <workItem from="1768475528043" duration="1890000" />
+      <workItem from="1768481322405" duration="489000" />
     </task>
     <task id="LOCAL-00001" summary="Initial">
       <option name="closed" value="true" />
@@ -82,7 +81,23 @@
       <option name="project" value="LOCAL" />
       <updated>1768475989162</updated>
     </task>
-    <option name="localTasksCounter" value="3" />
+    <task id="LOCAL-00003" summary="Initial">
+      <option name="closed" value="true" />
+      <created>1768476909023</created>
+      <option name="number" value="00003" />
+      <option name="presentableId" value="LOCAL-00003" />
+      <option name="project" value="LOCAL" />
+      <updated>1768476909023</updated>
+    </task>
+    <task id="LOCAL-00004" summary="Initial">
+      <option name="closed" value="true" />
+      <created>1768481449794</created>
+      <option name="number" value="00004" />
+      <option name="presentableId" value="LOCAL-00004" />
+      <option name="project" value="LOCAL" />
+      <updated>1768481449794</updated>
+    </task>
+    <option name="localTasksCounter" value="5" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
