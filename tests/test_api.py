@@ -1,9 +1,10 @@
+import asyncio
 import os
 import sys
-import pytest
-import asyncio
-from httpx import AsyncClient, ASGITransport
 from unittest.mock import patch
+
+import pytest
+from httpx import ASGITransport, AsyncClient
 
 # Add the parent directory to Python path
 current_dir = os.path.dirname(os.path.abspath(__file__))
@@ -15,7 +16,9 @@ from app.main import app
 
 @pytest.fixture
 async def client():
-    async with AsyncClient(transport=ASGITransport(app=app), base_url="http://test") as ac:
+    async with AsyncClient(
+        transport=ASGITransport(app=app), base_url="http://test"
+    ) as ac:
         yield ac
 
 
@@ -25,7 +28,7 @@ async def test_health_endpoint_success(client):
     print("\n=== DEBUG test_health_endpoint_success ===")
 
     # Mock redis_client.ping to succeed
-    with patch('app.main.redis_client.ping') as mock_ping:
+    with patch("app.main.redis_client.ping") as mock_ping:
         mock_ping.return_value = True
 
         response = await client.get("/health")
@@ -43,7 +46,7 @@ async def test_health_endpoint_redis_down(client):
     import redis
 
     # Mock redis_client.ping to raise an exception
-    with patch('app.main.redis_client.ping') as mock_ping:
+    with patch("app.main.redis_client.ping") as mock_ping:
         mock_ping.side_effect = redis.exceptions.RedisError("Connection failed")
 
         response = await client.get("/health")
@@ -61,11 +64,11 @@ async def test_put_get_value(client, mock_redis):
     mock_redis.delete("1234567890abcdef1234567890abcdef")
 
     # Mock the redis operations in your app
-    with patch('app.main.redis_client', mock_redis):
+    with patch("app.main.redis_client", mock_redis):
         # Test PUT
         response = await client.put(
             "/1234567890abcdef1234567890abcdef",
-            content="fedcba0987654321fedcba0987654321"
+            content="fedcba0987654321fedcba0987654321",
         )
         print(f"PUT Response status: {response.status_code}")
         assert response.status_code == 201
@@ -82,6 +85,7 @@ async def test_put_get_value(client, mock_redis):
             response_text = response_text[1:-1]
 
         assert response_text == "fedcba0987654321fedcba0987654321"
+
 
 @pytest.mark.asyncio
 async def test_invalid_hex_format(client):
